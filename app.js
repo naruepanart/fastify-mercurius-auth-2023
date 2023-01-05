@@ -11,9 +11,13 @@ const schema = `
   directive @auth on OBJECT | FIELD_DEFINITION
 
   type Query {
-    add(x: Int, y: Int): Int @auth
+    add(x: Int, y: Int): Math @auth
     add2(x: Int, y: Int): Int
     users: [User]
+  }
+  type Math {
+    plus: Int
+    minus: Int
   }
   type User {
     id: ID!
@@ -27,7 +31,12 @@ const schema = `
 
 const resolvers = {
   Query: {
-    add: async (_, { x, y }) => x + y,
+    add: async (_, { x, y }) => {
+      return {
+        plus: x + y,
+        minus: x - y,
+      };
+    },
     add2: async (_, { x, y }) => x * y,
   },
   Mutation: {
