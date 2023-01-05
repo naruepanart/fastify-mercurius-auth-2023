@@ -18,6 +18,8 @@ const schema = `
   type Math {
     plus: Int
     minus: Int
+    multiply : Int
+    divide: Int
   }
   type User {
     id: ID!
@@ -35,6 +37,8 @@ const resolvers = {
       return {
         plus: x + y,
         minus: x - y,
+        multiply: x * y,
+        divide: x / y,
       };
     },
     add2: async (_, { x, y }) => x * y,
