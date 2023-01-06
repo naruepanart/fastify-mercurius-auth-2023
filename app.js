@@ -33,7 +33,9 @@ const schema = `
 
 const resolvers = {
   Query: {
-    add: async (_, { x, y }) => {
+    add: async (parent, args, context, info) => {
+      const { x, y } = args;
+      console.log(context.auth);
       return {
         plus: x + y,
         minus: x - y,
@@ -66,16 +68,19 @@ app.register(mercurius, {
 app.register(mercuriusAuth, {
   authContext(context) {
     return {
-      identity: context.reply.request.headers["x-user"],
+      identity: context.reply.request.headers["authorization"],
     };
   },
   async applyPolicy(authDirectiveAST, parent, args, context, info) {
-    const auth = "Bearer " + context.auth.identity;
-    if (auth) {
-      const token = auth.split(" ")[1];
+    const authHeader = "Bearer " + context.auth.identity;
+    if (authHeader) {
+      const token = authHeader.split(" ")[1];
       try {
         const decoded = jwt.verify(token, JWT_SECRET);
+       /* Checking if the user is an admin. If not, it returns. */
         if (!decoded.isAdmin) return;
+        /* Adding the decoded JWT to the context.auth object. */
+        context.auth.users = decoded;
         return { user: decoded };
       } catch (err) {
         console.error(err);
