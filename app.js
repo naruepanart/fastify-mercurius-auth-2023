@@ -47,13 +47,9 @@ const resolvers = {
   },
   Mutation: {
     login: async (_, { email, password }) => {
-      // Validate the email and password
-      // (in a real application, you would query a database here)
       if (email !== "user@example.com" || password !== "password") {
         throw new Error("Invalid email or password");
       }
-
-      // Create a JWT and return it
       return jwt.sign({ sub: "user@example.com", isAdmin: true }, JWT_SECRET);
     },
   },
@@ -77,7 +73,7 @@ app.register(mercuriusAuth, {
       const token = authHeader.split(" ")[1];
       try {
         const decoded = jwt.verify(token, JWT_SECRET);
-       /* Checking if the user is an admin. If not, it returns. */
+        /* Checking if the user is an admin. If not, it returns. */
         if (!decoded.isAdmin) return;
         /* Adding the decoded JWT to the context.auth object. */
         context.auth.users = decoded;
